@@ -1,0 +1,10 @@
+# Example user assignment
+
+user_assignments = {
+  example_user = {
+    user_principal_name = "user@example.com"
+    groups = [
+      "grp-az-dev-backend-read"
+    ]
+  }
+}
