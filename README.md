@@ -4,7 +4,7 @@
 
 ---
 
-## 🎯 Project Overview
+## Project Overview
 
 This project demonstrates production-ready Azure Identity and Access Management (IAM) implemented entirely with Terraform, using the **IPGC governance model:**
 
@@ -331,7 +331,7 @@ Fully coded but disabled due to licensing or tenant constraints:
 
 ---
 
-## 🚀 Deployment Model
+## Deployment Model
 
 - **Terraform is the single source of truth**
 - **CI/CD Service Principal performs all production changes**
