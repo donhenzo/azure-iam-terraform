@@ -13,16 +13,16 @@ This project demonstrates production-ready Azure Identity and Access Management 
 Rather than configuring access manually through the Azure Portal, all identity, RBAC, and Conditional Access decisions are defined **declaratively**.
 
 This ensures access is:
-- ✅ **Deliberate** - Every permission has a documented reason
-- ✅ **Auditable** - Git history = access audit trail
-- ✅ **Least-privileged** - Scoped to minimum required access
-- ✅ **Consistently enforced** - No configuration drift
+- **Deliberate** - Every permission has a documented reason
+- **Auditable** - Git history = access audit trail
+- **Least-privileged** - Scoped to minimum required access
+- **Consistently enforced** - No configuration drift
 
 **IAM decisions are treated as security architecture, not operational afterthoughts.**
 
 ---
 
-## 🧭 Identity Governance Model — IPGC
+## Identity Governance Model — IPGC
 
 This project is explicitly designed around **IPGC:**
 
@@ -42,7 +42,7 @@ The technical enforcement mechanisms that make violations *impossible*.
 
 ---
 
-## 1️⃣ INTENT — Access Design Philosophy
+## 1 INTENT — Access Design Philosophy
 
 ### Environment Intent
 
@@ -53,19 +53,19 @@ The technical enforcement mechanisms that make violations *impossible*.
 
 ### Identity Intent
 
-- ✅ Users are never assigned roles directly** - All access flows through Entra ID security groups
-- ✅ Identity lifecycle must be reversible, auditable, and centralized
-- ✅ Automation identities are separated from human identities
+- Users are never assigned roles directly** - All access flows through Entra ID security groups
+- Identity lifecycle must be reversible, auditable, and centralized
+- Automation identities are separated from human identities
 
 ### Security Intent
 
-- ✅ Least privilege by default
-- ✅ Blast radius must be limited by scope
-- ✅ Environment separation must be enforced technically, not procedurally
+- Least privilege by default
+- Blast radius must be limited by scope
+- Environment separation must be enforced technically, not procedurally
 
 ---
 
-## 2️⃣ POLICY — Intent Expressed as Code
+## 2️ POLICY — Intent Expressed as Code
 
 In this project, **policy is Terraform.**
 
@@ -79,7 +79,7 @@ All permissions are expressed through this chain.
 
 ---
 
-## 🏗️ Architecture Overview
+##  Architecture Overview
 
 ### Current Implementation
 
@@ -105,7 +105,7 @@ All permissions are expressed through this chain.
 
 ---
 
-## 🔐 RBAC Policy Design
+## RBAC Policy Design
 
 ### Group Naming Convention
 
@@ -136,14 +136,14 @@ Used for enterprise-wide job functions.
 Scenario: New "staging" environment is created
 
 Backend team:
-  ✅ Create new group: grp-az-staging-backend-contrib
+  Create new group: grp-az-staging-backend-contrib
   
 Accounting team:
-  ✅ NO action needed - existing grp-az-accounting-read 
+  NO action needed - existing grp-az-accounting-read 
      already has subscription-wide access
   
 Helpdesk team:
-  ✅ NO action needed - they manage shared tools, 
+  NO action needed - they manage shared tools, 
      not environment-specific resources
 ```
 
@@ -177,8 +177,8 @@ Helpdesk team:
 ```
 Scenario: New RG "rg-prod-analytics" is created tomorrow
 
-❌ RG-scoped: Would require manual RBAC update for accounting team
-✅ Subscription-scoped: Accounting automatically gains read access
+RG-scoped: Would require manual RBAC update for accounting team
+Subscription-scoped: Accounting automatically gains read access
 ```
 
 ---
@@ -210,19 +210,19 @@ user_assignments = {
 
 
 **Lifecycle automation:**
-- ✅ **Add a user** → Terraform grants group access
-- ✅ **Remove a user** → Terraform revokes all access
-- ✅ **No manual cleanup**
-- ✅ **No orphaned permissions**
+- **Add a user** → Terraform grants group access
+- **Remove a user** → Terraform revokes all access
+- **No manual cleanup**
+- **No orphaned permissions**
 
 This enforces **Join → Move → Leave** automatically.
 
 ### Change Governance
 
-- ✅ **All IAM changes go through Terraform**
-- ✅ **Git history = access audit trail**
-- ✅ **No portal-only access modifications**
-- ✅ **Changes are reviewable, reproducible, and reversible**
+- **All IAM changes go through Terraform**
+- **Git history = access audit trail**
+- **No portal-only access modifications**
+- **Changes are reviewable, reproducible, and reversible**
 
 ### Environment Governance
 
@@ -235,15 +235,15 @@ This enforces **Join → Move → Leave** automatically.
 
 Each workspace has its own state file, preventing cross-environment drift.
 
-#### ⚠️ Critical Rule
+#### Critical Rule
 
 **Workspace must always match the environment variable.**
 ```bash
-# ✅ CORRECT
+# CORRECT
 terraform workspace select dev
 terraform apply -var="environment=dev" ...
 
-# ❌ WRONG (breaks governance guarantees)
+# WRONG (breaks governance guarantees)
 terraform workspace select prod
 terraform apply -var="environment=dev" ...
 ```
@@ -254,24 +254,24 @@ Violating this creates **state contamination** where prod state contains dev res
 
 **Privileged Identity Management (PIM)** is planned to complete the governance layer:
 
-- ✅ Just-in-time role activation
-- ✅ Approval workflows
-- ✅ Time-bound elevation
-- ✅ Access reviews
+- Just-in-time role activation
+- Approval workflows
+- Time-bound elevation
+- Access reviews
 
 This will govern **exceptional access**, not normal operations.
 
 ---
 
-## 4️⃣ CONTROL — Technical Enforcement
+## 4️ CONTROL — Technical Enforcement
 
 Controls are what make policy violations **technically impossible**.
 
 ### Identity Controls
 
-- ✅ **Group-only RBAC assignments** - No user-to-role bindings
-- ✅ **Correct handling of principal types** - Users ≠ Service Principals
-- ✅ **Environment-aware group creation** - Prevents duplicate global groups
+- **Group-only RBAC assignments** - No user-to-role bindings
+- **Correct handling of principal types** - Users ≠ Service Principals
+- **Environment-aware group creation** - Prevents duplicate global groups
 
 **Code example:**
 
@@ -279,40 +279,40 @@ shared_groups = var.environment == "dev" ? [...] : []
 
 
 This single condition prevents:
-- ❌ Duplicate tenant-wide groups
-- ❌ Accidental prod privilege escalation
+- Duplicate tenant-wide groups
+- Accidental prod privilege escalation
 
 ### Access Controls
 
-- ✅ **Resource Group scoping** - Limits blast radius
-- ✅ **Read-only human access in prod** - No standing write access
-- ✅ **Automation identity scoped explicitly** - SP has minimum required permissions
+- **Resource Group scoping** - Limits blast radius
+- **Read-only human access in prod** - No standing write access
+- **Automation identity scoped explicitly** - SP has minimum required permissions
 
 ### Authentication Controls (Conditional Access)
 
-#### 🛡️ Implemented: CA-HUMAN-BASELINE-MFA
+#### Implemented: CA-HUMAN-BASELINE-MFA
 
 **Purpose:** Prevent account takeover of human users by enforcing modern authentication and MFA, while explicitly protecting automation.
 
 **Applies to:**
-- ✅ All human users (new users protected automatically)
+- All human users (new users protected automatically)
 
 **Excludes:**
-- ❌ Service principals (cannot do MFA)
-- ❌ Break-glass accounts (emergency access preserved)
+- Service principals (cannot do MFA)
+- Break-glass accounts (emergency access preserved)
 
 **Enforces:**
-- ✅ Multi-Factor Authentication
-- ✅ Modern authentication only
-- ✅ No persistent browser sessions
-- ✅ Re-authentication every 2 days
+- Multi-Factor Authentication
+- Modern authentication only
+- No persistent browser sessions
+- Re-authentication every 2 days
 
 **Blocks:**
-- ❌ Password-only attacks
-- ❌ Legacy protocol abuse (Basic Auth, old SMTP, POP3)
-- ❌ Token replay from weak clients
+- Password-only attacks
+- Legacy protocol abuse (Basic Auth, old SMTP, POP3)
+- Token replay from weak clients
 
-#### 📋 Designed (Not Enforced Yet)
+#### Designed (Not Enforced Yet)
 
 Fully coded but disabled due to licensing or tenant constraints:
 
@@ -333,10 +333,10 @@ Fully coded but disabled due to licensing or tenant constraints:
 
 ## 🚀 Deployment Model
 
-- ✅ **Terraform is the single source of truth**
-- ✅ **CI/CD Service Principal performs all production changes**
-- ✅ **Humans do not deploy to production**
-- ✅ **No standing write access in prod**
+- **Terraform is the single source of truth**
+- **CI/CD Service Principal performs all production changes**
+- **Humans do not deploy to production**
+- **No standing write access in prod**
 
 ### Service Principal Permissions
 
@@ -376,7 +376,7 @@ az role assignment create \
 
 ---
 
-## 📖 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -444,7 +444,7 @@ terraform apply -var="environment=dev" -var="terraform_sp_object_id=<sp-id>"
 
 ---
 
-## 🐛 Lessons Learned
+## Lessons Learned
 
 ### 1. Identity Governance Is Logic, Not Objects
 
@@ -452,14 +452,13 @@ shared_groups = var.environment == "dev" ? [...] : []
 
 
 This single condition prevents:
-- ❌ Duplicate tenant-wide groups
-- ❌ Accidental prod privilege escalation
+- Duplicate tenant-wide groups
+- Accidental prod privilege escalation
 
 **Lesson:** I didn't say "create these 6 groups." I said "for this environment, these identities exist and have these permissions." That is a  shift from **objects → intent**. 
 
 ### 2. Tenant-Wide vs Environment-Scoped Resources
 
-2. Tenant-Wide vs Environment-Scoped Resources
 •	Groups, Resource Groups, RBAC → environment-specific
 •	Conditional Access → tenant-wide (created once)
 Mixing these incorrectly creates hidden privilege paths.
@@ -526,7 +525,7 @@ resource "azuread_group" "iam_groups" {
 
 ---
 
-## 🚧 Future Enhancements
+## Future Enhancements
 
 |Feature	Status
 Privileged Identity Management (PIM)	Planned
@@ -540,13 +539,13 @@ Defender for Cloud                  	Planned
 **Purpose:** Just-in-time privileged access to production
 
 **Benefits:**
-- ✅ No standing admin access to prod
-- ✅ Time-limited access (auto-revoke after 8 hours)
-- ✅ Approval workflow for activation
-- ✅ Full audit trail
+- No standing admin access to prod
+- Time-limited access (auto-revoke after 8 hours)
+- Approval workflow for activation
+- Full audit trail
 
 
-## 📌 Final Statement
+## Final Statement
 
 This project demonstrates **Azure IAM implemented using the IPGC governance model**, where:
 
@@ -559,10 +558,27 @@ This project demonstrates **Azure IAM implemented using the IPGC governance mode
 
 ---
 
-## 📄 License
+## License
 
 This project is for educational and portfolio purposes.
 
 ---
 
-**Built with ❤️ using Terraform, Azure, and IPGC principles**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{"Donhenz}
